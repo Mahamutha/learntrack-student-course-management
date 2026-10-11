@@ -1,8 +1,11 @@
 package com.airtribe.learntrack.ui;
 
+import com.airtribe.learntrack.constants.AppConstants;
+import com.airtribe.learntrack.constants.MenuOptions;
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.entity.Enrollment;
 import com.airtribe.learntrack.entity.Student;
+import com.airtribe.learntrack.enums.EnrollmentStatus;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
 import com.airtribe.learntrack.service.CourseService;
@@ -20,7 +23,7 @@ public class Main {
     private static EnrollmentService enrollmentService = new EnrollmentService(studentService, courseService);
 
     public static void main(String[] args) {
-        System.out.println("Welcome to Student & Course Management System");
+        System.out.println("Welcome to " + AppConstants.APP_NAME);
 
         int choice;
         do {
@@ -32,13 +35,13 @@ public class Main {
             choice = readInt("Enter your choice: ");
 
             switch (choice) {
-                case 1 -> studentMenu();
-                case 2 -> courseMenu();
-                case 3 -> enrollmentMenu();
-                case 0 -> System.out.println("Goodbye!");
-                default -> System.out.println("Invalid option, please try again.");
+                case MenuOptions.STUDENT_MANAGEMENT -> studentMenu();
+                case MenuOptions.COURSE_MANAGEMENT -> courseMenu();
+                case MenuOptions.ENROLLMENT_MANAGEMENT -> enrollmentMenu();
+                case MenuOptions.EXIT -> System.out.println("Goodbye!");
+                default -> System.out.println(AppConstants.INVALID_OPTION);
             }
-        } while (choice != 0);
+        } while (choice != MenuOptions.EXIT);
     }
 
     // ===== Student Management =====
@@ -56,15 +59,15 @@ public class Main {
             choice = readInt("Enter your choice: ");
 
             switch (choice) {
-                case 1 -> handleAddStudent();
-                case 2 -> handleViewStudents();
-                case 3 -> handleSearchStudent();
-                case 4 -> handleUpdateStudent();
-                case 5 -> handleDeactivateStudent();
-                case 0 -> System.out.println("Returning to main menu");
-                default -> System.out.println("Invalid option, please try again.");
+                case MenuOptions.ADD_STUDENT -> handleAddStudent();
+                case MenuOptions.VIEW_STUDENTS -> handleViewStudents();
+                case MenuOptions.SEARCH_STUDENT -> handleSearchStudent();
+                case MenuOptions.UPDATE_STUDENT -> handleUpdateStudent();
+                case MenuOptions.DEACTIVATE_STUDENT -> handleDeactivateStudent();
+                case MenuOptions.BACK -> System.out.println(AppConstants.RETURNING_TO_MAIN_MENU);
+                default -> System.out.println(AppConstants.INVALID_OPTION);
             }
-        } while (choice != 0);
+        } while (choice != MenuOptions.BACK);
     }
 
     private static void handleAddStudent() {
@@ -99,7 +102,7 @@ public class Main {
         try {
             printStudent(studentService.findStudentById(id));
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -112,7 +115,7 @@ public class Main {
             studentService.updateStudent(id, email, batch);
             System.out.println("Student " + id + " updated.");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -122,7 +125,7 @@ public class Main {
             studentService.deactivateStudent(id);
             System.out.println("Student " + id + " deactivated.");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -145,14 +148,14 @@ public class Main {
             choice = readInt("Enter your choice: ");
 
             switch (choice) {
-                case 1 -> handleAddCourse();
-                case 2 -> handleViewCourses();
-                case 3 -> handleActivateCourse();
-                case 4 -> handleDeactivateCourse();
-                case 0 -> System.out.println("Returning to main menu");
-                default -> System.out.println("Invalid option, please try again.");
+                case MenuOptions.ADD_COURSE -> handleAddCourse();
+                case MenuOptions.VIEW_COURSES -> handleViewCourses();
+                case MenuOptions.ACTIVATE_COURSE -> handleActivateCourse();
+                case MenuOptions.DEACTIVATE_COURSE -> handleDeactivateCourse();
+                case MenuOptions.BACK -> System.out.println(AppConstants.RETURNING_TO_MAIN_MENU);
+                default -> System.out.println(AppConstants.INVALID_OPTION);
             }
-        } while (choice != 0);
+        } while (choice != MenuOptions.BACK);
     }
 
     private static void handleAddCourse() {
@@ -160,7 +163,7 @@ public class Main {
         String description = readText("Description: ", "Description");
         int durationInWeeks = readInt("Duration in weeks: ");
         if (durationInWeeks <= 0) {
-            System.out.println("Error: Duration must be greater than 0.");
+            System.out.println(AppConstants.ERROR_PREFIX + "Duration must be greater than 0.");
             return;
         }
         Course course = courseService.addCourse(courseName, description, durationInWeeks);
@@ -187,7 +190,7 @@ public class Main {
             courseService.activateCourse(id);
             System.out.println("Course " + id + " activated.");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -197,7 +200,7 @@ public class Main {
             courseService.deactivateCourse(id);
             System.out.println("Course " + id + " deactivated.");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -215,14 +218,14 @@ public class Main {
             choice = readInt("Enter your choice: ");
 
             switch (choice) {
-                case 1 -> handleEnrollStudent();
-                case 2 -> handleViewEnrollments();
-                case 3 -> handleCompleteEnrollment();
-                case 4 -> handleCancelEnrollment();
-                case 0 -> System.out.println("Returning to main menu");
-                default -> System.out.println("Invalid option, please try again.");
+                case MenuOptions.ENROLL_STUDENT -> handleEnrollStudent();
+                case MenuOptions.VIEW_ENROLLMENTS -> handleViewEnrollments();
+                case MenuOptions.COMPLETE_ENROLLMENT -> handleCompleteEnrollment();
+                case MenuOptions.CANCEL_ENROLLMENT -> handleCancelEnrollment();
+                case MenuOptions.BACK -> System.out.println(AppConstants.RETURNING_TO_MAIN_MENU);
+                default -> System.out.println(AppConstants.INVALID_OPTION);
             }
-        } while (choice != 0);
+        } while (choice != MenuOptions.BACK);
     }
 
     private static void handleEnrollStudent() {
@@ -232,7 +235,7 @@ public class Main {
             Enrollment enrollment = enrollmentService.enrollStudent(studentId, courseId);
             System.out.println("Enrollment created with ID " + enrollment.getId() + ".");
         } catch (EntityNotFoundException | InvalidInputException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -251,7 +254,7 @@ public class Main {
                         + " | Status: " + enrollment.getStatus());
             }
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -259,9 +262,9 @@ public class Main {
         int id = readInt("Enter enrollment ID: ");
         try {
             enrollmentService.completeEnrollment(id);
-            System.out.println("Enrollment " + id + " marked as COMPLETED.");
+            System.out.println("Enrollment " + id + " marked as " + EnrollmentStatus.COMPLETED + ".");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 
@@ -269,9 +272,9 @@ public class Main {
         int id = readInt("Enter enrollment ID: ");
         try {
             enrollmentService.cancelEnrollment(id);
-            System.out.println("Enrollment " + id + " marked as CANCELLED.");
+            System.out.println("Enrollment " + id + " marked as " + EnrollmentStatus.CANCELLED + ".");
         } catch (EntityNotFoundException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
 

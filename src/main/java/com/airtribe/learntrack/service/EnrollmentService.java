@@ -3,14 +3,16 @@ package com.airtribe.learntrack.service;
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.entity.Enrollment;
 import com.airtribe.learntrack.entity.Student;
+import com.airtribe.learntrack.enums.EnrollmentStatus;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
+import com.airtribe.learntrack.repository.EnrollmentRepository;
 import com.airtribe.learntrack.util.IdGenerator;
 
 import java.util.ArrayList;
 
 public class EnrollmentService {
-    private ArrayList<Enrollment> enrollments = new ArrayList<>();
+    private EnrollmentRepository enrollmentRepository = new EnrollmentRepository();
     private StudentService studentService;
     private CourseService courseService;
 
@@ -32,47 +34,39 @@ public class EnrollmentService {
         }
 
         // Check if the student is already enrolled in the course
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getStudentId() == studentId && enrollment.getCourseId() == courseId && enrollment.getStatus().equals("ACTIVE")) {
+        for (Enrollment enrollment : enrollmentRepository.findByStudentId(studentId)) {
+            if (enrollment.getCourseId() == courseId && enrollment.getStatus() == EnrollmentStatus.ACTIVE) {
                 throw new InvalidInputException("Student with ID " + studentId + " is already enrolled in course with ID " + courseId);
             }
         }
 
         int id = IdGenerator.getNextEnrollmentId();
         Enrollment enrollment = new Enrollment(id, studentId, courseId);
-        enrollments.add(enrollment);
+        enrollmentRepository.save(enrollment);
         return enrollment;
     }
 
     public ArrayList<Enrollment> getEnrollmentsForStudent(int studentId) throws EntityNotFoundException {
         // Validate student existence
         studentService.findStudentById(studentId);
-
-        ArrayList<Enrollment> studentEnrollments = new ArrayList<>();
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getStudentId() == studentId) {
-                studentEnrollments.add(enrollment);
-            }
-        }
-        return studentEnrollments;
+        return enrollmentRepository.findByStudentId(studentId);
     }
 
     public Enrollment findEnrollmentById(int id) throws EntityNotFoundException {
-        for (Enrollment enrollment : enrollments) {
-            if (enrollment.getId() == id) {
-                return enrollment;
-            }
+        Enrollment enrollment = enrollmentRepository.findById(id);
+        if (enrollment == null) {
+            throw new EntityNotFoundException("Enrollment with ID " + id + " not found.");
         }
-        throw new EntityNotFoundException("Enrollment with ID " + id + " not found.");
+        return enrollment;
     }
 
     public void completeEnrollment(int id) throws EntityNotFoundException {
         Enrollment enrollment = findEnrollmentById(id);
-        enrollment.setStatus("COMPLETED");
+        enrollment.setStatus(EnrollmentStatus.COMPLETED);
     }
 
     public void cancelEnrollment(int id) throws EntityNotFoundException {
         Enrollment enrollment = findEnrollmentById(id);
-        enrollment.setStatus("CANCELLED");
+        enrollment.setStatus(EnrollmentStatus.CANCELLED);
     }
 }

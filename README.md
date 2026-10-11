@@ -8,21 +8,24 @@ My LearnTrack project for the Airtribe Java cohort. It's a console app where an 
 - Courses: add, view all, activate or deactivate
 - Enrollments: enroll a student in a course, view a student's enrollments, mark one as completed or cancelled
 
-You can't enroll someone in a deactivated course, or in the same course twice while the first enrollment is still active. Wrong input (letters instead of a number, a menu option that doesn't exist, an ID that doesn't exist, an empty name) just shows a message and asks again.
+You can't enroll a deactivated student, enroll anyone in a deactivated course, or enroll the same student in the same course twice while the first enrollment is still active. Wrong input (letters instead of a number, a menu option that doesn't exist, an ID that doesn't exist, an empty name) just shows a message and asks again.
 
 ## Structure
 
 ```
 src/main/java/com/airtribe/learntrack/
     entity/      Person, Student, Trainer, Course, Enrollment
+    repository/  StudentRepository, CourseRepository, EnrollmentRepository
     service/     StudentService, CourseService, EnrollmentService
     exception/   EntityNotFoundException, InvalidInputException
     util/        IdGenerator, InputValidator
+    constants/   MenuOptions, AppConstants
+    enums/       EnrollmentStatus
     ui/          Main
 docs/            setup, JVM basics, design notes
 ```
 
-Entities hold the data, services have the logic, and Main only shows the menus and calls the services.
+Entities hold the data, repositories keep them in ArrayLists, services have the logic, and Main only shows the menus and calls the services.
 
 ## How to run
 
@@ -76,10 +79,36 @@ classDiagram
         -int studentId
         -int courseId
         -LocalDate enrollmentDate
-        -String status
+        -EnrollmentStatus status
+    }
+    class EnrollmentStatus {
+        <<enumeration>>
+        ACTIVE
+        COMPLETED
+        CANCELLED
+    }
+    class StudentRepository {
+        -ArrayList~Student~ students
+        +save(student)
+        +findAll() ArrayList~Student~
+        +findById(id) Student
+        +delete(student)
+    }
+    class CourseRepository {
+        -ArrayList~Course~ courses
+        +save(course)
+        +findAll() ArrayList~Course~
+        +findById(id) Course
+    }
+    class EnrollmentRepository {
+        -ArrayList~Enrollment~ enrollments
+        +save(enrollment)
+        +findAll() ArrayList~Enrollment~
+        +findById(id) Enrollment
+        +findByStudentId(studentId) ArrayList~Enrollment~
     }
     class StudentService {
-        -ArrayList~Student~ students
+        -StudentRepository studentRepository
         +addStudent(firstName, lastName, email, batch) Student
         +addStudent(firstName, lastName, batch) Student
         +listStudents() ArrayList~Student~
@@ -89,7 +118,7 @@ classDiagram
         +removeStudent(id)
     }
     class CourseService {
-        -ArrayList~Course~ courses
+        -CourseRepository courseRepository
         +addCourse(courseName, description, durationInWeeks) Course
         +listCourses() ArrayList~Course~
         +findCourseById(id) Course
@@ -97,7 +126,7 @@ classDiagram
         +deactivateCourse(id)
     }
     class EnrollmentService {
-        -ArrayList~Enrollment~ enrollments
+        -EnrollmentRepository enrollmentRepository
         +enrollStudent(studentId, courseId) Enrollment
         +getEnrollmentsForStudent(studentId) ArrayList~Enrollment~
         +completeEnrollment(id)
@@ -115,6 +144,8 @@ classDiagram
         +parseInt(input)$ int
         +requireNonEmpty(input, fieldName)$ String
     }
+    class MenuOptions
+    class AppConstants
     class Exception
     class EntityNotFoundException
     class InvalidInputException
@@ -124,9 +155,13 @@ classDiagram
     Person <|-- Trainer
     Exception <|-- EntityNotFoundException
     Exception <|-- InvalidInputException
-    StudentService o-- Student
-    CourseService o-- Course
-    EnrollmentService o-- Enrollment
+    Enrollment --> EnrollmentStatus
+    StudentRepository o-- Student
+    CourseRepository o-- Course
+    EnrollmentRepository o-- Enrollment
+    StudentService --> StudentRepository
+    CourseService --> CourseRepository
+    EnrollmentService --> EnrollmentRepository
     EnrollmentService --> StudentService
     EnrollmentService --> CourseService
     StudentService ..> IdGenerator
@@ -136,6 +171,8 @@ classDiagram
     Main --> CourseService
     Main --> EnrollmentService
     Main ..> InputValidator
+    Main ..> MenuOptions
+    Main ..> AppConstants
 ```
 
 `$` = static, `-` = private, `+` = public
