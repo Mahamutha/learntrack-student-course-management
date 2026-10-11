@@ -1,0 +1,1 @@
+rootProject.name = "student-course-management-system"
