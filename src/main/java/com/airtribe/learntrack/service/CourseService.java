@@ -5,6 +5,7 @@ import com.airtribe.learntrack.exception.EntityNotFoundException;
 import com.airtribe.learntrack.exception.InvalidInputException;
 import com.airtribe.learntrack.repository.CourseRepository;
 import com.airtribe.learntrack.util.IdGenerator;
+import com.airtribe.learntrack.util.InputValidator;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,8 @@ public class CourseService {
     private CourseRepository courseRepository = new CourseRepository();
 
     public Course addCourse(String courseName, String description, int durationInWeeks) throws InvalidInputException {
+        courseName = InputValidator.requireNonEmpty(courseName, "Course name");
+        description = InputValidator.requireNonEmpty(description, "Description");
         if (durationInWeeks <= 0){
             throw new InvalidInputException("Duration must be greater than 0.");
         }

@@ -45,7 +45,6 @@ public class StudentService {
     }
 
     public void removeStudent(int id) throws EntityNotFoundException {
-        Student student = findStudentById(id);
-        studentRepository.delete(student);
+        deactivateStudent(id);
     }
 }

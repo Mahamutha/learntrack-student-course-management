@@ -267,7 +267,7 @@ public class Main {
         try {
             enrollmentService.completeEnrollment(id);
             System.out.println("Enrollment " + id + " marked as " + EnrollmentStatus.COMPLETED + ".");
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | InvalidInputException e) {
             System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }
@@ -277,7 +277,7 @@ public class Main {
         try {
             enrollmentService.cancelEnrollment(id);
             System.out.println("Enrollment " + id + " marked as " + EnrollmentStatus.CANCELLED + ".");
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | InvalidInputException e) {
             System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
     }

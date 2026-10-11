@@ -12,7 +12,7 @@ public class CourseRepository {
     }
 
     public ArrayList<Course> findAll() {
-        return courses;
+        return new ArrayList<>(courses);
     }
 
     public Course findById(int id) {

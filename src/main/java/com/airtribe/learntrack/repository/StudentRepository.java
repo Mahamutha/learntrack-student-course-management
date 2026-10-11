@@ -12,7 +12,7 @@ public class StudentRepository {
     }
 
     public ArrayList<Student> findAll() {
-        return students;
+        return new ArrayList<>(students);
     }
 
     public Student findById(int id) {
@@ -22,9 +22,5 @@ public class StudentRepository {
             }
         }
         return null;
-    }
-
-    public void delete(Student student) {
-        students.remove(student);
     }
 }

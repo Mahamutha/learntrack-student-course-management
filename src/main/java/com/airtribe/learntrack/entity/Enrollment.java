@@ -5,10 +5,10 @@ import com.airtribe.learntrack.enums.EnrollmentStatus;
 import java.time.LocalDate;
 
 public class Enrollment {
-    private int id;
-    private int studentId;
-    private int courseId;
-    private LocalDate enrollmentDate;
+    private final int id;
+    private final int studentId;
+    private final int courseId;
+    private final LocalDate enrollmentDate;
     private EnrollmentStatus status;
 
     public Enrollment(int id, int studentId, int courseId) {

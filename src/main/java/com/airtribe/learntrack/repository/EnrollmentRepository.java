@@ -12,7 +12,7 @@ public class EnrollmentRepository {
     }
 
     public ArrayList<Enrollment> findAll() {
-        return enrollments;
+        return new ArrayList<>(enrollments);
     }
 
     public Enrollment findById(int id) {

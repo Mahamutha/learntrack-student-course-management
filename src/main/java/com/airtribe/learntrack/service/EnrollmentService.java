@@ -60,13 +60,19 @@ public class EnrollmentService {
         return enrollment;
     }
 
-    public void completeEnrollment(int id) throws EntityNotFoundException {
+    public void completeEnrollment(int id) throws EntityNotFoundException, InvalidInputException {
         Enrollment enrollment = findEnrollmentById(id);
+        if (enrollment.getStatus() != EnrollmentStatus.ACTIVE){
+            throw new InvalidInputException("Enrollment " + id + " is already " + enrollment.getStatus() + ".");
+        }
         enrollment.setStatus(EnrollmentStatus.COMPLETED);
     }
 
-    public void cancelEnrollment(int id) throws EntityNotFoundException {
+    public void cancelEnrollment(int id) throws EntityNotFoundException, InvalidInputException {
         Enrollment enrollment = findEnrollmentById(id);
+        if (enrollment.getStatus() != EnrollmentStatus.ACTIVE){
+            throw new InvalidInputException("Enrollment " + id + " is already " + enrollment.getStatus() + ".");
+        }
         enrollment.setStatus(EnrollmentStatus.CANCELLED);
     }
 }

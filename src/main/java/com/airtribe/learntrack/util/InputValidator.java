@@ -7,6 +7,10 @@ public class InputValidator {
     }
 
     public static int parseInt(String input) throws InvalidInputException {
+        if (input == null){
+            throw new InvalidInputException("Input cannot be empty.");
+        }
+
         try {
             return Integer.parseInt(input.trim());
         } catch (NumberFormatException e) {
