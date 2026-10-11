@@ -130,8 +130,12 @@ public class Main {
     }
 
     private static void printStudent(Student student) {
+        String email = student.getEmail();
+        if (email == null){
+            email = "not provided";
+        }
         System.out.println(student.getId() + " | " + student.getDisplayName()
-                + " | Email: " + student.getEmail() + " | Active: " + student.isActive());
+                + " | Email: " + email + " | Active: " + student.isActive());
     }
 
     // ===== Course Management =====
@@ -162,12 +166,12 @@ public class Main {
         String courseName = readText("Course name: ", "Course name");
         String description = readText("Description: ", "Description");
         int durationInWeeks = readInt("Duration in weeks: ");
-        if (durationInWeeks <= 0) {
-            System.out.println(AppConstants.ERROR_PREFIX + "Duration must be greater than 0.");
-            return;
+        try {
+            Course course = courseService.addCourse(courseName, description, durationInWeeks);
+            System.out.println("Course added with ID " + course.getId() + ": " + course.getCourseName());
+        } catch (InvalidInputException e) {
+            System.out.println(AppConstants.ERROR_PREFIX + e.getMessage());
         }
-        Course course = courseService.addCourse(courseName, description, durationInWeeks);
-        System.out.println("Course added with ID " + course.getId() + ": " + course.getCourseName());
     }
 
     private static void handleViewCourses() {

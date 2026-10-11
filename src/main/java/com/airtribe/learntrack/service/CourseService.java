@@ -2,6 +2,7 @@ package com.airtribe.learntrack.service;
 
 import com.airtribe.learntrack.entity.Course;
 import com.airtribe.learntrack.exception.EntityNotFoundException;
+import com.airtribe.learntrack.exception.InvalidInputException;
 import com.airtribe.learntrack.repository.CourseRepository;
 import com.airtribe.learntrack.util.IdGenerator;
 
@@ -10,7 +11,10 @@ import java.util.ArrayList;
 public class CourseService {
     private CourseRepository courseRepository = new CourseRepository();
 
-    public Course addCourse(String courseName, String description, int durationInWeeks) {
+    public Course addCourse(String courseName, String description, int durationInWeeks) throws InvalidInputException {
+        if (durationInWeeks <= 0){
+            throw new InvalidInputException("Duration must be greater than 0.");
+        }
         int id = IdGenerator.getNextCourseId();
         Course course = new Course(id, courseName, description, durationInWeeks);
         courseRepository.save(course);
